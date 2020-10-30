@@ -61,3 +61,24 @@ MATCH (m:Movie {title: row.movie_title})
 MATCH (g:Genre {name: genre})
 MERGE (m)-[:IN_GENRE]->(g);
 
+
+// one off 
+CREATE (a:Actor {name: 'Dustin Chambers'});
+CREATE (m:Movie {title: 'Dustins Movie'});
+
+MATCH (m:Movie {title: 'Dustins Movie'})
+MATCH (a:Actor {name: 'Dustin Chambers'})
+MERGE (a)-[:ACTED_IN]->(m);
+
+MATCH (m:Movie)<-[:ACTED_IN]-(a:Actor)
+WHERE m.title = 'Dustins Movie'
+RETURN m.title, a.name
+
+MATCH (m:Movie)
+WHERE m.title = 'Dustins Movie'
+DETACH DELETE m
+
+MATCH (a:Actor)
+WHERE a.name = 'Dustin Chambers'
+DETACH DELETE a
+
