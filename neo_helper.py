@@ -5,8 +5,26 @@ class NeoHelper:
         self.name = "NeoHelper"
 
     def connect_graph(self, username, password):
-        graph = Graph("bolt://localhost:7687", user=username, password=password)
+        graph = self.Graph("bolt://localhost:7687", user=username, password=password)
         self.graph = graph
+
+    def add_movie_node(self, title, duration, gross, language, budget, usersCount, imdbScore, movieFbLikes):
+        node = self.Node('Movie', 
+            title=title, duration=duration, gross=gross, language=language, usersCount=usersCount,
+            imdbScore=imdbScore, movieFbLikes=movieFbLikes)
+        
+        self.graph.create(node)
+
+        print('Node successfully created')
+
+    def remove_movie_node(self, title):
+        self.graph.run('''
+            MATCH (m:Movie)
+            WHERE m.title = $movie_title
+            DETACH DELETE m
+            ''', movie_title = title)
+
+        print('Movie successfully deleted')
 
     def create_movie_nodes(self, df):
         # create movies nodes
