@@ -135,6 +135,23 @@ class NeoHelper:
 
         print("Actor nodes successfully created!")
 
+    def add_actor_movie_relationship(self, actor_name, movie_title):
+        matcher = self.NodeMatcher(self.graph)
+        movie_node = matcher.match('Movie', title=movie_title).first()
+        actor_node = matcher.match('Actor', name=actor_name).first()
+        relationship = self.Relationship(actor_node, 'ACTED_IN', movie_node)
+        self.graph.create(relationship)
+        print('Actor to Movie relationship successfully created')
+
+    def remove_actor_movie_relationship(self, actor_name, movie_title):
+        query = '''
+        MATCH (a:Actor)-[r:ACTED_IN]->(m:Movie)
+        WHERE a.name = $actor_name and m.title = $movie_title
+        DELETE r
+        '''
+        self.graph.run(query, actor_name = actor_name, movie_title = movie_title)
+        print('Actor to Movie relationship successfully removed')
+
     def create_actor_movie_relationships(self, df):
         # Actors
         for i in range(df.shape[0]):
@@ -179,6 +196,23 @@ class NeoHelper:
                 self.graph.create(relationship)        
 
         print("Relationships created successfully!")
+
+    def add_director_movie_relationship(self, director_name, movie_title):
+        matcher = self.NodeMatcher(self.graph)
+        movie_node = matcher.match('Movie', title=movie_title).first()
+        director_node = matcher.match('Director', name=director_name).first()
+        relationship = self.Relationship(director_node, 'DIRECTED', movie_node)
+        self.graph.create(relationship)
+        print('Director to Movie relationship successfully created')
+
+    def remove_director_movie_relationship(self, director_name, movie_title):
+        query = '''
+        MATCH (d:Director)-[r:DIRECTED]->(m:Movie)
+        WHERE d.name = $director_name and m.title = $movie_title
+        DELETE r
+        '''
+        self.graph.run(query, director_name = director_name, movie_title = movie_title)
+        print('Director to Movie relationship successfully removed')
 
     def create_director_movie_relationship(self, df):
         # Directors
