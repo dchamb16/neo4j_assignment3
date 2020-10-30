@@ -66,6 +66,20 @@ class NeoHelper:
 
         print("Plot nodes successfully created!")
 
+    def add_director_node(self, director_name):
+        node = self.Node('Director', name=director_name)
+        self.graph.create(node)
+        print('Director successfully added')
+
+    def remove_director_node(self, director_name):
+        self.graph.run('''
+            MATCH (d:Director)
+            WHERE d.name = $director_name
+            DETACH DELETE d
+            ''', director_name = director_name)
+
+        print('Director successfully removed')
+
     def create_director_nodes(self, df):
         # create director nodes
         all_directors = set()
@@ -92,6 +106,20 @@ class NeoHelper:
             self.graph.create(node)
 
         print("Genre nodes successfully created!")
+
+    def add_actor_node(self, actor_name):
+        node = self.Node('Actor', name=actor_name)
+        self.graph.create(node)
+        print('Actor successfully added')
+
+    def remove_actor_node(self, actor_name):
+        self.graph.run('''
+            MATCH (a:Actor)
+            WHERE a.name = $actor_name
+            DETACH DELETE a
+            ''', actor_name = actor_name)
+
+        print('Actor successfully removed')
 
     def create_actor_nodes(self, df):
         # create actors nodes
