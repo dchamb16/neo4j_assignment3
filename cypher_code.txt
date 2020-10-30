@@ -1,0 +1,63 @@
+// load movie, director, actor
+LOAD CSV WITH HEADERS FROM 'file:///movie_data.csv' AS row
+WITH row WHERE NOT row.num_user_for_reviews IS NULL
+MERGE (m:Movie {title: row.movie_title, duration: row.duration, gross: row.gross, language: row.language, budget: row.budget, usersCount: row.num_user_for_reviews, imdbScore: row.imdb_score, movieFbLikes: row.movie_facebook_likes})
+MERGE (d:Director {name: row.director_name})
+WITH [row.actor_1_name, row.actor_2_name, row.actor_3_name] AS actors
+UNWIND actors AS actor
+MERGE (a:Actor {name: actor});
+
+// load plots
+LOAD CSV WITH HEADERS FROM 'file:///movie_data.csv' AS row
+WITH row WHERE NOT row.num_user_for_reviews IS NULL
+UNWIND SPLIT(row.plot_keywords, '|') AS plots
+MERGE (p:Plot {name: plots});
+
+// load genres
+LOAD CSV WITH HEADERS FROM 'file:///movie_data.csv' AS row
+WITH row WHERE NOT row.num_user_for_reviews IS NULL
+UNWIND SPLIT(row.genres, '|') AS genres
+MERGE (g:Genre {name: genres});
+
+// director movie relationship
+LOAD CSV WITH HEADERS FROM 'file:///movie_data.csv' AS row
+WITH row WHERE NOT row.num_user_for_reviews IS NULL
+MATCH (m:Movie {title: row.movie_title})
+MATCH (d:Director {name: row.director_name})
+MERGE (d)-[:DIRECTED]->(m);
+
+// actor movie relationship
+LOAD CSV WITH HEADERS FROM 'file:///movie_data.csv' AS row
+WITH row WHERE NOT row.num_user_for_reviews IS NULL
+MATCH (a:Actor {name: row.actor_1_name})
+MATCH (m:Movie {title: row.movie_title})
+MERGE (a)-[:ACTED_IN]->(m);
+
+LOAD CSV WITH HEADERS FROM 'file:///movie_data.csv' AS row
+WITH row WHERE NOT row.num_user_for_reviews IS NULL
+MATCH (a:Actor {name: row.actor_2_name})
+MATCH (m:Movie {title: row.movie_title})
+MERGE (a)-[:ACTED_IN]->(m);
+
+LOAD CSV WITH HEADERS FROM 'file:///movie_data.csv' AS row
+WITH row WHERE NOT row.num_user_for_reviews IS NULL
+MATCH (a:Actor {name: row.actor_3_name})
+MATCH (m:Movie {title: row.movie_title})
+MERGE (a)-[:ACTED_IN]->(m);
+
+// movie plot relationship
+LOAD CSV WITH HEADERS FROM 'file:///movie_data.csv' AS row
+WITH row WHERE NOT row.num_user_for_reviews IS NULL
+UNWIND SPLIT(row.plot_keywords, '|') AS plot
+MATCH (m:Movie {title: row.movie_title})
+MATCH (p:Plot {name: plot})
+MERGE (m)-[:HAS_PLOT]->(p);
+
+// movie genre relationship
+LOAD CSV WITH HEADERS FROM 'file:///movie_data.csv' AS row
+WITH row WHERE NOT row.num_user_for_reviews IS NULL
+UNWIND SPLIT(row.genres, '|') as genre
+MATCH (m:Movie {title: row.movie_title})
+MATCH (g:Genre {name: genre})
+MERGE (m)-[:IN_GENRE]->(g);
+
