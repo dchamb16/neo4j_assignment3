@@ -31,3 +31,8 @@ helper.remove_director_node('Carrie Chambers')
 helper.remove_actor_node('Dustin Chambers')
 
 # queries
+helper.query_who_acted_in('King Kong')
+helper.query_who_directed('King Kong')
+helper.query_actor_acted_in('Naomi Watts')
+helper.query_acted_with('Naomi Watts')
+helper.query_directed('Peter Jackson')
