@@ -72,28 +72,28 @@ MERGE (a)-[:ACTED_IN]->(m);
 
 MATCH (m:Movie)<-[:ACTED_IN]-(a:Actor)
 WHERE m.title = 'Dustins Movie'
-RETURN m.title, a.name
+RETURN m.title, a.name;
 
 MATCH (m:Movie)
 WHERE m.title = 'Dustins Movie'
-DETACH DELETE m
+DETACH DELETE m;
 
 MATCH (a:Actor)
 WHERE a.name = 'Dustin Chambers'
-DETACH DELETE a
+DETACH DELETE a;
 
 // who acted in movies directed by Peter Jackson
 MATCH (a:Actor)-[:ACTED_IN]->(m:Movie)<-[:DIRECTED]-(d:Director)
 WHERE d.name = 'Peter Jackson'
-RETURN a.name AS actor_name, m.title AS movie_title
+RETURN a.name AS actor_name, m.title AS movie_title;
 
 // Who acted in the most Action movies
 MATCH (a:Actor)-[:ACTED_IN]->(m:Movie)-[:IN_GENRE]->(g:Genre)
 WHERE g.name = 'Action'
 RETURN a.name as actor_name, COUNT(g) AS num_roles
-ORDER BY num_roles DESC
+ORDER BY num_roles DESC;
 
 // Most popular plots
 MATCH (m:Movie)-[:HAS_PLOT]->(p:Plot)
 RETURN p.name, COUNT(m.title) AS num_movies
-ORDER BY num_movies DESC
+ORDER BY num_movies DESC;
